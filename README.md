@@ -1,1 +1,1 @@
-# Hidden-Markov-Model-HMM-
+# Hidden-Markov-Model (HMM)
