@@ -1,0 +1,149 @@
+---
+title: "GEE analysis (Psychosocial)"
+output: html_notebook
+---
+
+```{r}
+# Load required libraries
+library(tidyverse)
+library(lme4)
+library(lmerTest)
+library(geepack)
+library(emmeans)
+library(dplyr)
+```
+
+```{r}
+# Set working directory
+setwd("D:/anaconda3/Diabetes/survey (pre_post)")
+
+# Load datasets
+quality_df <- read_csv("user_quality_df.csv")
+activity_df <- read_csv("user_activity_df.csv")
+depression_df <- read_csv("user_depression_pivot.csv")
+selfeff_df <- read_csv("user_selfeff_pivot.csv")
+
+# Function to convert wide → long format
+to_long <- function(df, score_before, score_after, score_name) {
+  df %>%
+    pivot_longer(cols = c({{score_before}}, {{score_after}}),
+                 names_to = "time", values_to = score_name) %>%
+    mutate(time = ifelse(str_detect(time, "before"), 0, 1))
+}
+
+# Apply to each measurement
+quality_long <- to_long(quality_df, qu_sum_before, qu_sum_after, "score") %>%
+  mutate(domain = "quality")
+
+activity_long <- to_long(activity_df, be_sum_before, be_sum_after, "score") %>%
+  mutate(domain = "activity")
+
+depression_long <- to_long(depression_df, de_sum_before, de_sum_after, "score") %>%
+  mutate(domain = "depression")
+
+selfeff_long <- to_long(selfeff_df, eff_sum_before, eff_sum_after, "score") %>%
+  mutate(domain = "selfeff")
+
+# Merge all domains
+full_data <- bind_rows(quality_long, activity_long, depression_long, selfeff_long) %>%
+  mutate(cluster = factor(cluster),
+         성명 = factor(성명),
+         domain = factor(domain),
+         time = factor(time))
+
+# Summary statistics by domain, cluster, and time
+summary_stats <- full_data %>%
+  group_by(domain, cluster, time) %>%
+  summarise(
+    mean_score = mean(score, na.rm = TRUE),
+    sd_score = sd(score, na.rm = TRUE),
+    n = n(),
+    .groups = "drop"
+  )
+
+print(summary_stats)
+```
+
+```{r}
+# Function to generate a summary table from GEE results
+gee_summary_table <- function(gee_model, outcome_label = "Outcome", save_csv = TRUE, file_prefix = "GEE") {
+  coef_table <- summary(gee_model)$coefficients
+  ci_table <- confint.default(gee_model)
+  
+  result_table <- data.frame(
+    Outcome = outcome_label,
+    Effect = rownames(coef_table),
+    Estimate = round(coef_table[, "Estimate"], 3),
+    StdErr = round(coef_table[, "Std.err"], 3),
+    Wald = round(coef_table[, "Wald"], 2),
+    PValue = signif(coef_table[, "Pr(>|W|)"], 3),
+    CI_Lower = round(ci_table[, 1], 3),
+    CI_Upper = round(ci_table[, 2], 3)
+  )
+  
+  return(result_table)
+}
+```
+
+
+```{r}
+# Function to run GEE and emmeans posthoc analysis
+run_models <- function(data, domain_label) {
+  cat("\n==============", toupper(domain_label), "==============\n")
+  
+  df <- data %>%
+    filter(domain == domain_label) %>%
+    mutate(cluster = relevel(cluster, ref = 1)) 
+
+  # Fit GEE model
+  gee <- geeglm(score ~ time * cluster, id = 성명, data = df, family = gaussian, corstr = "exchangeable")
+  resid_sd <- sqrt(mean(residuals(gee)^2))
+
+  cat("\n--- GEE Summary ---\n")
+  print(summary(gee))
+  
+  cat("\n--- 95% CI for Coefficients ---\n")
+  print(confint.default(gee))
+
+  # Show GEE coefficient summary table (no file saved)
+  cat("\n--- GEE Summary Table ---\n")
+  gee_table <- gee_summary_table(gee, outcome_label = domain_label)
+  print(gee_table)
+
+  # Post-hoc analysis (within-group change)
+  cat("\n--- Post-hoc: Within-Group Change ---\n")
+  emm <- emmeans(gee, ~ time | cluster)
+  contrast_result <- contrast(emm, method = list("time1 - time0" = c(-1, 1)), adjust = "bonferroni")
+  print(contrast_result)
+
+  # Post-hoc analysis (between-group at each time point)
+  cat("\n--- Post-hoc: Between-Group Comparison ---\n")
+  emm_between <- emmeans(gee, ~ cluster | time)
+  contrast_between <- contrast(emm_between, method = "pairwise", adjust = "bonferroni")
+  print(contrast_between)
+
+  # Effect size calculation (standardized mean difference)
+  cat("\n--- Effect Size ---\n")
+  effect_sizes <- contrast_result %>%
+    as.data.frame() %>%
+    mutate(effect_size = estimate / resid_sd)
+
+  print(effect_sizes[, c("cluster", "contrast", "estimate", "SE", "p.value", "effect_size")])
+}
+```
+
+```{r}
+# Domains to analyze
+domains <- c("quality", "activity", "depression", "selfeff")
+
+# Run models including all clusters
+for (d in domains) {
+  cat("\n\n====", toupper(d), " (All Clusters Included) ====\n")
+  
+  domain_data <- full_data %>%
+    filter(domain == d) %>% 
+    droplevels()
+  
+  run_models(domain_data, d)
+}
+```
