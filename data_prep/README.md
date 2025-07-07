@@ -9,8 +9,8 @@ This project involves analyzing data collected from a mobile health (mHealth) ap
   - **12 weeks of intervention**
   - **+ 4 weeks of post-intervention follow-up**
 - The time window is determined **individually**, based on the participant’s **app enrollment date**, which is available in the **nurse call dataset**.
-- **Note**: The duration can be adjusted depending on your study design.  
-  For example, if your intervention lasts for 8 weeks instead of 12, simply modify the filtering period accordingly.
+> **Note**: The duration can be adjusted depending on your study design.  
+> For example, if your intervention lasts for 8 weeks instead of 12, simply modify the filtering period accordingly.
 
 ## Daily Activity Aggregation & Data Format
 For each user and each day, calculate both **engagement** and **adherence** based on the app's main features.  
