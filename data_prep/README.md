@@ -31,3 +31,43 @@ For **each day**, record the following:
 To ensure quality and prevent noise in the data:
 - Abnormal or unrealistic logs were excluded  
   - **Example**: If a user logged **more than 4 meals** or **blood sugar checks** in a day, these entries were **removed** as outliers.
+ 
+## Patient-Level Time Series Generation
+
+Once you have the daily aggregated multivariate data (e.g., exercise, meals, medication, blood sugar logs),  
+the final step is to transform it into a **patient-wise time series** format suitable for time-series modeling or clustering.
+
+Each patient should have a matrix of shape **(N days × K features)**.  
+In our case, we used 4 binary features:
+
+- `undong` (운동)
+- `bob` (밥)
+- `yak` (약)
+- `blood` (식사/혈당)
+
+For example, a few rows in the daily dataframe might look like this:
+
+| 작성일자 | 환자명 | undong | bob | yak | blood |
+|----------|--------|--------|-----|-----|--------|
+| 2023-04-10 | 유성근 | 1 | 1 | 1 | 1 |
+| 2023-04-11 | 유성근 | 1 | 1 | 1 | 1 |
+| ...        | ...    | ... | ... | ... | ... |
+
+You then convert this into a dictionary format where:
+
+- The key is the patient name (or ID)
+- The value is a **NumPy array** representing their multivariate sequence
+
+```python
+patient_sequences = {
+    '유성근': array([[1, 1, 1, 1],
+                    [1, 1, 1, 1],
+                    ...
+                   ]),
+    '강춘자': array([[1, 1, 1, 1],
+                    [0, 0, 0, 0],
+                    ...
+                   ]),
+    ...
+}
+
