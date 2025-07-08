@@ -1,5 +1,5 @@
 # Data Preprocessing Summary
-This project involves analyzing data collected from a mobile health (mHealth) app for diabetes management. Participants used the app to log daily health behaviors such as blood glucose, meals, medication intake, and exercise. Additional data was collected through two rounds of surveys and nurse call notes. Below outlines the data preprocessing pipeline step by step for reproducibility and clarity.
+This project involves analyzing data collected from a mobile health (mHealth) app for diabetes management. Below outlines the data preprocessing pipeline step by step for reproducibility and clarity.
 
 ## Participants
 - Only include participants who completed both the 1st and 2nd surveys.
