@@ -2,13 +2,13 @@
 This project involves analyzing data collected from a mobile health (mHealth) app for diabetes management. Below outlines the data preprocessing pipeline step by step for reproducibility and clarity.
 
 ## Participants
-- Only include participants who completed both the 1st and 2nd surveys.
+Only include participants who completed both the 1st and 2nd surveys.
 
 ## Time Range Filtering
-- In our study, each participant’s data should be limited to:
-  - **12 weeks of intervention**
-  - **+ 4 weeks of post-intervention follow-up**
-- This time window is **individualized per participant**, starting from their **app enrollment date**, which is available in the **nurse call dataset**.
+In our study, each participant’s data should be limited to:
+ - **12 weeks of intervention**
+ - **+ 4 weeks of post-intervention follow-up**
+This time window is **individualized per participant**, starting from their **app enrollment date**, which is available in the **nurse call dataset**.
 > **Note**: Modify the duration (e.g., 8 or 16 weeks) based on your specific study design.
 
 ## Daily Activity Aggregation
@@ -23,7 +23,7 @@ For each user and each day, compute the following:
 
 ### 2. Adherence (Input Value)
 - Record actual inputs values (e.g., blood sugar values, medication taken) **if available**
-> Customize this step based on the features available in your mHealth app.
+> **Note**: Customize this step based on the features available in your mHealth app.
 
 ## Data Cleaning
 To ensure quality and prevent noise in the data:
