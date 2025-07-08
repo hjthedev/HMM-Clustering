@@ -8,6 +8,7 @@ Only include participants who completed both the 1st and 2nd surveys.
 In our study, each participant’s data should be limited to:
  - **12 weeks of intervention**
  - **+ 4 weeks of post-intervention follow-up**
+
 This time window is **individualized per participant**, starting from their **app enrollment date**, which is available in the **nurse call dataset**.
 > **Note**: Modify the duration (e.g., 8 or 16 weeks) based on your specific study design.
 
