@@ -45,7 +45,7 @@ A few rows in the daily dataframe might look like this:
 | 2023-04-11 | 유\*근 | 1        | 1    | 1        | 1     |
 | ...        | ...    | ...      | ...  | ...      | ...   |
 
-You then convert this into a dictionary format where:
+You then convert this into a **dictionary** format where:
 
 ```python
 patient_sequences = {
