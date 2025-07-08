@@ -20,7 +20,7 @@ For each user and each day, compute the following:
   - **Exercise**
   - **Meal**
   - **Medication**
-  - **Blood sugar logs**
+  - **Blood sugar**
 
 ### 2. Adherence (Input Value)
 - Record actual inputs values (e.g., blood sugar values, medication taken) **if available**
