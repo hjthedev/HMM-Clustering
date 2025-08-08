@@ -1,4 +1,4 @@
-# Beyond Frequency: Longitudinal Engagement Patterns in mHealth Interventions for Older Adults with Type 2 Diabetes
+# Beyond Frequency: Longitudinal Engagement Trajectories in mHealth Interventions for Older Adults with Type 2 Diabetes
 This research-driven repository analyzes user engagement patterns from a 12-week mHealth intervention for older adults with Type 2 Diabetes (T2D). Using Hidden Markov Models (HMMs), it identifies longitudinal behavioral trajectories and evaluates their clinical relevance and long-term sustainability.
 
 ## Getting Started
